@@ -2,6 +2,7 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
+const openai = require('./config/openai.js');
 
 app.use(express.static(path.join(__dirname, 'dist')));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -13,6 +14,12 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 // Define a route to render the index.ejs file
 
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+});
 
 app.use('/dist', express.static(path.join(__dirname, "dist")));
 app.use('/public', express.static(path.join(__dirname, "public")));
@@ -22,8 +29,9 @@ app.use(express.static('dist'))
 
 app.get(__dirname + '/dist/output.css', (req, res) => { res.type('css'); res.sendFile(path.join(__dirname, 'dist', 'output.css')); });
 app.get(__dirname + '/public/bundle.js', (req, res) => { res.type('js'); res.sendFile(path.join(__dirname, 'public', 'bundle.js')); })
+
 app.get('/mnt/c/Users/Admin/Projects/dist/output.css', (req, res) => { res.type('css'); res.sendFile(path.join(__dirname, 'dist', 'output.css')); });
-app.get('/mnt/c/Users/Admin/Projects/public/bundle.js', (req, res) => { res.type('css'); res.sendFile(path.join(__dirname, 'dist', 'output.css')); });
+app.get('/mnt/c/Users/Admin/Projects/public/bundle.js', (req, res) => { res.type('js'); res.sendFile(path.join(__dirname, 'public', 'bundle.js')); });
 
 app.get('/', (req, res) => {
     let context = []
@@ -37,9 +45,34 @@ app.get('/', (req, res) => {
         context: JSON.stringify(context),
         path: path.join(__dirname, '../dist/output.css'),
         scriptPath: path.join(__dirname, '../public/bundle.js'),
+        postRoute: 'http://127.0.0.1:3000' + '/api',
+
     });
 });
 
+app.post('/api', async (req, res) => {
+    let context = JSON.parse(req.body.context ?? '[]');
+    let input = req.body.input ?? '';
+
+
+    let messages = []
+    if (typeof context == 'array' && context.length > 0) messages = [...messages, ...context]
+    messages.push(input)
+    // return res.json({ message: 'Hello from EJS', context: context, input: input, messages: messages });
+
+    const completion = await openai.createChatCompletion({
+        model: 'gpt-3.5-turbo',
+        messages: messages,
+    });
+
+
+    return res.json({ message: 'Hello from EJS' });
+
+    const completionText = completion.data.choices[0].message.content.trim();
+    // Render the index.ejs file and pass some data to it
+    res.render('index', { title: 'Express Template', message: completionText, context: JSON.stringify([...context, input, completionText]) });
+}
+)
 // Define a route to handle the request for the paginated result
 
 // Start the server on port 3000

@@ -22,13 +22,14 @@
         <p>
             <%= message %>
         </p>
+        <div data-controller="assistant" data-assistant-route-value="<%= postRoute %>"
+            class="w-full flex items-center justify-center py-4">
+            <input data-assistant-target="input" type="text" name="input" placeholder="Start talking...">
+            <input data-assistant-target="context" type="hidden" name="context" value="<%= context %>">
+            <button type="button" data-action="assistant#post">Submit</button>
+        </div>
     </div>
-    <div class="w-full flex items-center justify-center py-4">
-        <form action="/api" method="post">
-            <input type="text" name="input" placeholder="Start talking...">
-            <input type="hidden" name="context" value="<%= context %>">
-            <button type="submit">Submit</button>
-        </form>
-    </div>
+
 </body>
+
 </html>
