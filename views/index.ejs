@@ -7,15 +7,15 @@
     <title>
         <%= title %>
     </title>
-    <link href="<%= path %>" rel="stylesheet">
-    <link href="https://vjs.zencdn.net/7.17.0/video-js.css" rel="stylesheet" />
+    <link type="text/css" rel="stylesheet" href="<%= path %>">
+    <link type="text/css" href="https://vjs.zencdn.net/7.17.0/video-js.css" rel="stylesheet" />
     <script src="https://vjs.zencdn.net/7.17.0/video.min.js"></script>
     <script src="<%= scriptPath %>"></script>
 
 </head>
 
 <body class="bg-black">
-    <div class="w-full flex items-center justify-center flex-col gap-4">
+    <div class="w-full h-screen flex items-center justify-center flex-col gap-4">
         <h1>
             <%= title %>
         </h1>
@@ -30,7 +30,5 @@
             <button type="submit">Submit</button>
         </form>
     </div>
-
 </body>
-
 </html>
