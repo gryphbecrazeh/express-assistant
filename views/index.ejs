@@ -1,0 +1,36 @@
+<!-- index.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>
+        <%= title %>
+    </title>
+    <link href="<%= path %>" rel="stylesheet">
+    <link href="https://vjs.zencdn.net/7.17.0/video-js.css" rel="stylesheet" />
+    <script src="https://vjs.zencdn.net/7.17.0/video.min.js"></script>
+    <script src="<%= scriptPath %>"></script>
+
+</head>
+
+<body class="bg-black">
+    <div class="w-full flex items-center justify-center flex-col gap-4">
+        <h1>
+            <%= title %>
+        </h1>
+        <p>
+            <%= message %>
+        </p>
+    </div>
+    <div class="w-full flex items-center justify-center py-4">
+        <form action="/api" method="post">
+            <input type="text" name="input" placeholder="Start talking...">
+            <input type="hidden" name="context" value="<%= context %>">
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+</body>
+
+</html>
