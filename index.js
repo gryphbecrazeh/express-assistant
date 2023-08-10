@@ -57,14 +57,19 @@ app.post('/api', async (req, res) => {
 
         const messages = context
 
+
         const prePrompt = ''
-        const prePromptOneTime = ``
-        const postPromptReminder = ''
+        // const prePromptOneTime = ``
+        // const postPromptReminder = ''
+        const prePromptOneTime = 'User I\'ve attached an interpreter to your responses, from now on, please always respond in a properly formatted json object, any messages need to be given to the message property, do not use special characters in your messages, the interpreter is able to send you back prompts with context and information, you can use it to search the internet by adding a request property, and providing an array of search queries, the interpreter will respond back with the urls and pages for those queries to provide context, please use the interpreter to look up context, and provide me an answer to my questions. Here is my first message: '
+
+        const postPromptReminder = ' (Please remember, when giving me a response,  write out all of the long detailed passage with highly detailed and 10 long paragraphs, take your time with all descriptions, go into great depth over each topic, give me a list of options to choose from, following a selection with highly detailed and long paragraphs, take your time with all descriptions, go into great depth over each topic)'
+
 
         if (context.length < 1) {
             messages.push({ role: 'user', content: prePromptOneTime + ' ' + input })
         } else {
-            messages.push({ role: 'user', content: input })
+            messages.push({ role: 'user', content: input + postPromptReminder })
         }
 
         const completion = await openai.createChatCompletion({
