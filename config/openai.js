@@ -8,5 +8,5 @@ const configuration = new Configuration({
 });
 
 const openai = new OpenAIApi(configuration);
-console.log('test over here')
 module.exports = openai;
+

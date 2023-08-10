@@ -51,26 +51,46 @@ app.get('/', (req, res) => {
 });
 
 app.post('/api', async (req, res) => {
-    let context = JSON.parse(req.body.context ?? '[]');
-    let input = req.body.input ?? '';
+    try {
+        let context = JSON.parse(req.body.context ?? '[]');
+        let input = req.body.input ?? '';
+
+        const messages = context
+
+        const prePrompt = ''
+        const prePromptOneTime = ``
+        const postPromptReminder = ''
+
+        if (context.length < 1) {
+            messages.push({ role: 'user', content: prePromptOneTime + ' ' + input })
+        } else {
+            messages.push({ role: 'user', content: input })
+        }
+
+        const completion = await openai.createChatCompletion({
+            model: 'gpt-3.5-turbo',
+            messages: messages,
+        });
 
 
-    let messages = []
-    if (typeof context == 'array' && context.length > 0) messages = [...messages, ...context]
-    messages.push(input)
-    // return res.json({ message: 'Hello from EJS', context: context, input: input, messages: messages });
+        const completionText = completion.data.choices[0].message.content.trim();
+        
+        messages.push({ role: 'assistant', content: completionText })
 
-    const completion = await openai.createChatCompletion({
-        model: 'gpt-3.5-turbo',
-        messages: messages,
-    });
+        // Render the index.ejs file and pass some data to it
+        return res.send(
+            {
+                title: 'Express Template',
+                message: completionText,
+                context: JSON.stringify(messages),
+                path: path.join(__dirname, '../dist/output.css'),
+                scriptPath: path.join(__dirname, '../public/bundle.js'),
+                postRoute: 'http://127.0.0.1:3000' + '/api',
+            });
 
-
-    return res.json({ message: 'Hello from EJS' });
-
-    const completionText = completion.data.choices[0].message.content.trim();
-    // Render the index.ejs file and pass some data to it
-    res.render('index', { title: 'Express Template', message: completionText, context: JSON.stringify([...context, input, completionText]) });
+    } catch (error) {
+        res.status(400).send(error)
+    }
 }
 )
 // Define a route to handle the request for the paginated result

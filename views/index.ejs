@@ -14,22 +14,22 @@
 
 </head>
 
-<body class="bg-black">
-    <div class="w-full h-screen flex items-center justify-center flex-col gap-4">
+<body data-controller="assistant" class="bg-black">
+    <form method="post" action="<%= postRoute %>" data-action="assistant#post"
+        class="w-full h-screen flex items-center justify-center flex-col gap-4" autocomplete="off">
         <h1>
             <%= title %>
         </h1>
-        <p>
+        <p data-assistant-target="message" class="text-white text-bold p-4 max-w-md">
             <%= message %>
         </p>
-        <div data-controller="assistant" data-assistant-route-value="<%= postRoute %>"
-            class="w-full flex items-center justify-center py-4">
+        <div data-assistant-route-value="<%= postRoute %>" class="w-full flex items-center justify-center py-4">
             <input data-assistant-target="input" type="text" name="input" placeholder="Start talking...">
             <input data-assistant-target="context" type="hidden" name="context" value="<%= context %>">
-            <button type="button" data-action="assistant#post">Submit</button>
+            <button type="submit">Submit</button>
         </div>
-    </div>
+        </div>
 
-</body>
+    </form>
 
 </html>
